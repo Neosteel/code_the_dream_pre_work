@@ -1,4 +1,33 @@
+// creating a current league variavle 
+var currentLeague = 39;
 
+// epl button element 
+var eplBtn = document.getElementById('epl-btn');
+// laliga button element
+var laligaBtn = document.getElementById('laliga-btn');
+// fixture section element
+var fixturesSection = document.getElementById('fixtures-section');
+// prediction section element
+var predictionsSection = document.getElementById('predictions-section');
+
+// buidling evetn listener 
+
+// listening for epl button click
+eplBtn.addEventListener('click', function() {
+    currentLeague = 39;
+    getFixtures(currentLeague).then(function(data) {
+        showFixtures(data);
+    });
+});
+
+// laliga button click listener 
+
+laligaBtn.addEventListener('click', function() {
+    currentLeague = 140;
+    getFixtures(currentLeague).then(function(data) {
+        showFixtures(data);
+    });
+});
 function showFixtures(data) {
     fixturesSection.innerHTML = "";
 
@@ -34,12 +63,14 @@ function showPredictions(matchId) {
         var awayWinPercent = prediction.percent.away;
 
         predictionsSection.innerHTML =
-            "<p>Predicted Winner: " + predictedWinner + "</p>" +
-            "<p>Advice: " + advice + "</p>" +
-            "<p>Home Win: " + homeWinPercent + "</p>" +
-            "<p>Draw: " + drawPercent + "</p>" +
-            "<p>Away Win: " + awayWinPercent + "</p>";
-    });
+        "<p>Predicted Winner: " + predictedWinner + "</p>" +
+        "<p>Advice: " + advice + "</p>" +
+        "<p>Home Win: " + homeWinPercent + "</p>" +
+        "<p>Draw: " + drawPercent + "</p>" +
+        "<p>Away Win: " + awayWinPercent + "</p>";
+
+    showInjurieslist(matchId);
+});
 }
 
 
@@ -75,7 +106,6 @@ function showPlayers(data) {
         playersSection.innerHTML = "<p>Player not found. Please try again.</p>";
         return;
     }
-
     data.response.forEach(function(playerData) {
         var playerName = playerData.player.name;
         var playerPhoto = playerData.player.photo;
@@ -105,3 +135,22 @@ function showPlayers(data) {
         playersSection.appendChild(playerCard);
     });
 }
+// injury display function 
+function showInjurieslist(matchId) {
+    getPlayerInjury(matchId).then(function(data) {
+        if (data.response.length === 0) {
+            predictionsSection.innerHTML += '<p>No injuries reported for this match</p>';
+            return;
+        }
+
+        data.response.forEach(function(item) {
+            var injuredPlayer = item.player.name;
+            var injuryType = item.player.reason;
+            var teamName = item.team.name;
+
+            predictionsSection.innerHTML +=
+                '<p>' + injuredPlayer + ' - ' + injuryType + ' (' + teamName + ')' + '</p>';
+        });
+    });
+}
+
