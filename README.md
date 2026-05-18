@@ -30,5 +30,3 @@ View player card showing goals, assists and card statistics
 ## API
 This app uses API-Football v3
  League IDs: 39 for Premier League 
- League IDs: 140 for La Liga
-Endpoints: /fixtures, /predictions, /players, /injuries
